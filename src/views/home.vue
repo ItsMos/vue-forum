@@ -4,7 +4,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
 import categoryList from '@/components/categoryList.vue'
 
 export default {
@@ -12,9 +11,9 @@ export default {
     categoryList
   },
 
-  data() {
-    return {
-      categories: sourceData.categories
+  computed: {
+    categories() {
+      return this.$store.state.categories
     }
   }
 }

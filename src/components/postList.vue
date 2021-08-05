@@ -24,15 +24,13 @@
       </div>
 
       <div class="post-date text-faded">
-        <vDate :timestamp='post.publishedAt'/>
+        <BaseDate :timestamp='post.publishedAt'/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import sourceData from '@/data.json'
-
 export default {
   props: {
     posts: {
@@ -41,9 +39,9 @@ export default {
     }
   },
 
-  data() {
-    return {
-      users: sourceData.users
+  computed: {
+    users() {
+      return this.$store.state.users
     }
   },
 

@@ -16,7 +16,7 @@
 
             <div class="activity">
                 <p class="replies-count">
-                    {{ thread.posts.length-1 }} {{ (thread.posts.length -1 > 1 || thread.posts.length === 0) ? "replies" : "reply" }}
+                    {{ thread.posts.length-1 }} {{ (thread.posts.length -1 > 1 || thread.posts.length -1 === 0) ? "replies" : "reply" }}
                 </p>
 
                 <img class="avatar-medium"
@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
-
 export default {
   props: {
     threads: {
@@ -47,10 +45,13 @@ export default {
     }
   },
 
-  data() {
-    return {
-      posts: sourceData.posts,
-      users: sourceData.users
+  computed: {
+    posts() {
+      return this.$store.state.posts
+    },
+
+    users() {
+      return this.$store.state.users
     }
   },
 

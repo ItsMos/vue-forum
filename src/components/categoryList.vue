@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
 import forumList from '@/components/forumList.vue'
 export default {
   props: {
@@ -23,7 +22,7 @@ export default {
 
   methods: {
     getForumsForCategory(category) {
-      return sourceData.forums.filter(f => f.categoryId === category.id)
+      return this.$store.state.forums.filter(f => f.categoryId === category.id)
     }
   }
 }

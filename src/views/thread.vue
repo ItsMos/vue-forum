@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import sourceData from '@/data.json'
 import postList from '@/components/postList.vue'
 import postEditor from '@/components/postEditor.vue'
 
@@ -26,14 +25,15 @@ export default {
     }
   },
 
-  data() {
-    return {
-      threads: sourceData.threads,
-      posts: sourceData.posts
-    }
-  },
-
   computed: {
+    threads() {
+      return this.$store.state.threads
+    },
+
+    posts() {
+      return this.$store.state.posts
+    },
+
     thread() {
       return this.threads.find(th => th.id === this.id)
     },
