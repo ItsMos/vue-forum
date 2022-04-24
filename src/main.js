@@ -7,7 +7,7 @@ const forumApp = createApp(App)
 forumApp.use(router)
 forumApp.use(store)
 
-const requireComponent = require.context('./components', true, /Base[A-Z]\w+\.(vue|js)$/)
+const requireComponent = require.context('./components', true, /App[A-Z]\w+\.(vue|js)$/)
 requireComponent.keys().forEach(function (fileName) {
   let baseComponentConfig = requireComponent(fileName)
   baseComponentConfig = baseComponentConfig.default || baseComponentConfig
