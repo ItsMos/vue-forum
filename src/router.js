@@ -3,6 +3,7 @@ import Home from '@/views/home.vue'
 import Category from '@/views/category.vue'
 import Thread from '@/views/thread.vue'
 import Forum from '@/views/forum.vue'
+import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
 import dataSource from '@/data.json'
 
@@ -11,6 +12,11 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/me',
+    name: 'Profile',
+    component: Profile
   },
   {
     path: '/category/:id',
@@ -36,6 +42,7 @@ const routes = [
       } else {
         next({
           name: 'NotFound',
+          // preserve the wrong url, query and hash
           params: { pathMatch: to.path.substring(1).split('/') },
           query: to.query,
           hash: to.hash
