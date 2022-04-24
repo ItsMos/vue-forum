@@ -14,7 +14,7 @@
           />
         </a>
 
-        <p class="desktop-only text-small">107 posts</p>
+        <p class="desktop-only text-small">{{userById(post.userId).postsCount}} posts</p>
       </div>
 
       <div class="post-content">
@@ -24,7 +24,7 @@
       </div>
 
       <div class="post-date text-faded">
-        <BaseDate :timestamp='post.publishedAt'/>
+        <AppDate :timestamp='post.publishedAt'/>
       </div>
     </div>
   </div>
