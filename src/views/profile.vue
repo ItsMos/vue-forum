@@ -75,8 +75,12 @@ export default {
       return this.userPosts.length
     },
 
+    userThreads() {
+      return this.$store.state.threads.filter(th => th.userId === this.user.id)
+    },
+
     userThreadsCount() {
-      return this.user.threads?.length || 0
+      return this.userThreads.length
     }
   }
 
