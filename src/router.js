@@ -3,10 +3,12 @@ import Home from '@/views/home.vue'
 import Category from '@/views/category.vue'
 import Thread from '@/views/thread.vue'
 import ThreadCreate from '@/views/threadCreate.vue'
+import ThreadEdit from '@/views/threadEdit.vue'
 import Forum from '@/views/forum.vue'
 import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
 import dataSource from '@/data.json'
+import { findById } from '@/helpers'
 
 const routes = [
   {
@@ -43,7 +45,7 @@ const routes = [
     component: Thread,
     props: true,
     beforeEnter(to, from, next) {
-      const threadExists = dataSource.threads.find(th => th.id === to.params.id)
+      const threadExists = findById(dataSource.threads, to.params.id)
       if (threadExists) {
         return next()
       } else {
@@ -61,6 +63,12 @@ const routes = [
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
+    props: true
+  },
+  {
+    path: '/thread/:id/edit',
+    name: 'ThreadEdit',
+    component: ThreadEdit,
     props: true
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }

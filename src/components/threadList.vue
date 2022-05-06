@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { findById } from '@/helpers'
 export default {
   props: {
     threads: {
@@ -56,10 +57,10 @@ export default {
 
   methods: {
     postById(id) {
-      return this.posts.find((p) => p.id === id)
+      return findById(this.posts, id)
     },
     userById(id) {
-      return this.users.find((u) => u.id === id)
+      return findById(this.users, id)
     }
   }
 }
