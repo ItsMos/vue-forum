@@ -11,6 +11,12 @@
       </router-link>
     </h1>
 
+    <p>
+      By <a href="#" class="link-unstyled">{{thread.author.name}}</a>, <AppDate :timestamp='thread.publishedAt'/>.
+      <span style="float:right; margin-top: 2px;" class="hide-mobile text-faded text-small">
+        {{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors
+      </span>
+    </p>
     <post-list :posts='threadPosts'/>
 
     <post-editor @save='addPost' />
@@ -20,7 +26,6 @@
 <script>
 import postList from '@/components/postList.vue'
 import postEditor from '@/components/postEditor.vue'
-import { findById } from '@/helpers'
 
 export default {
   components: {
@@ -45,7 +50,7 @@ export default {
     },
 
     thread() {
-      return findById(this.threads, this.id)
+      return this.$store.getters.thread(this.id)
     },
 
     threadPosts() {

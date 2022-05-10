@@ -11,25 +11,49 @@ export default createStore({
   },
 
   getters: {
-    authUser: state => {
-      const user = findById(state.users, state.authId)
-      if (!user) return null
-      return {
-        ...user,
-        get posts() {
-          return state.posts.filter(p => p.userId === user.id)
-        },
+    authUser: (state, getters) => {
+      return getters.user(state.authId)
+    },
 
-        get postsCount() {
-          return this.posts.length
-        },
+    user: state => {
+      return id => {
+        const user = findById(state.users, id)
+        if (!user) return null
+        return {
+          ...user,
+          get posts() {
+            return state.posts.filter(p => p.userId === user.id)
+          },
 
-        get threads() {
-          return state.threads.filter(th => th.userId === user.id)
-        },
+          get postsCount() {
+            return this.posts.length
+          },
 
-        get threadsCount() {
-          return this.threads.length
+          get threads() {
+            return state.threads.filter(th => th.userId === user.id)
+          },
+
+          get threadsCount() {
+            return this.threads.length
+          }
+        }
+      }
+    },
+
+    thread: state => {
+      return id => {
+        const thread = findById(state.threads, id)
+        return {
+          ...thread,
+          get author() {
+            return findById(state.users, thread.userId)
+          },
+          get repliesCount() {
+            return thread.posts.length - 1
+          },
+          get contributorsCount() {
+            return thread?.contributors?.length || 0
+          }
         }
       }
     }
@@ -41,7 +65,8 @@ export default createStore({
       post.userId = state.authId
       post.publishedAt = Math.floor(Date.now() / 1000)
       commit('setPost', { post })
-      commit('appendPostToThread', { postId: post.id, threadId: post.threadId })
+      commit('appendPostToThread', { childId: post.id, parentId: post.threadId })
+      commit('appendContributorToThread', { childId: state.authUser, parentId: post.threadId })
     },
 
     async createThread({ commit, state, dispatch }, { title, text, forumId }) {
@@ -50,8 +75,8 @@ export default createStore({
       const publishedAt = Math.floor(Date.now() / 1000)
       const thread = { forumId, title, publishedAt, userId, id }
       commit('setThread', { thread })
-      commit('appendThreadToForum', { threadId: id, forumId })
-      commit('appendThreadToUser', { threadId: id, userId })
+      commit('appendThreadToForum', { childId: id, parentId: forumId })
+      commit('appendThreadToUser', { childId: id, parentId: userId })
       dispatch('createPost', { text, threadId: id })
       return findById(state.threads, id)
     },
@@ -85,22 +110,19 @@ export default createStore({
       state.users[userIndex] = user
     },
 
-    appendPostToThread(state, { postId, threadId }) {
-      const thread = findById(state.threads, threadId)
-      thread.posts = thread.posts || []
-      thread.posts.push(postId)
-    },
-
-    appendThreadToForum(state, { threadId, forumId }) {
-      const forum = findById(state.forums, forumId)
-      forum.threads = forum.threads || []
-      forum.threads.push(threadId)
-    },
-
-    appendThreadToUser(state, { threadId, userId }) {
-      const user = findById(state.users, userId)
-      user.threads = user.threads || []
-      user.threads.push(threadId)
-    }
+    appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
+    appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),
+    appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' }),
+    appendContributorToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'contributors' })
   }
 })
+
+function makeAppendChildToParentMutation({ parent, child }) {
+  return (state, { childId, parentId }) => {
+    const resource = findById(state[parent], parentId)
+    resource[child] = resource[child] || []
+    if (!resource[child].includes(childId)) {
+      resource[child].push(childId)
+    }
+  }
+}

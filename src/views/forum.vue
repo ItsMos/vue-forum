@@ -40,7 +40,7 @@ export default {
     },
 
     threads () {
-      return this.$store.state.threads.filter(th => th.forumId === this.id)
+      return this.forum.threads.map(threadId => this.$store.getters.thread(threadId))
     }
   }
 }

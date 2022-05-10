@@ -15,7 +15,7 @@
 
         <div class="activity">
           <p class="replies-count">
-            {{ thread.posts.length-1 }} {{ (thread.posts.length -1 > 1 || thread.posts.length -1 === 0) ? "replies" : "reply" }}
+            {{ thread.repliesCount }} {{ (thread.repliesCount > 1 || thread.repliesCount === 0) ? "replies" : "reply" }}
           </p>
 
           <img class="avatar-medium"
