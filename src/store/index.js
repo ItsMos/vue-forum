@@ -89,6 +89,10 @@ export default createStore({
       commit('setItem', { resource: 'threads', newThread })
       commit('setItem', { resource: 'posts', post: newPost })
       return newThread
+    },
+
+    updateUser({ commit }, user) {
+      commit('setItem', { resource: 'users', user, userId: user.id })
     }
   },
 
