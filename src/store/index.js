@@ -1,10 +1,15 @@
 import { createStore } from 'vuex'
-import sourceData from '@/data'
 import { findById, upsert } from '@/helpers'
+import firebase from 'firebase/compat/app'
+import 'firebase/compat/firestore'
 
 export default createStore({
   state: {
-    ...sourceData,
+    categories: [],
+    forms: [],
+    threads: [],
+    posts: [],
+    users: [],
     // authId: 'rpbB8C6ifrYmNDufMERWfQUoa202'
     authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
     // authId: 'u4r8XCziZEWEXsj2UIKNHBoDh0n2'
@@ -93,6 +98,29 @@ export default createStore({
 
     updateUser({ commit }, user) {
       commit('setItem', { resource: 'users', user, userId: user.id })
+    },
+
+    fetchThread({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'threads', id })
+    },
+
+    fetchUser({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'users', id })
+    },
+
+    fetchPost({ dispatch }, { id }) {
+      return dispatch('fetchItem', { resource: 'posts', id })
+    },
+
+    fetchItem({ commit }, { id, resource }) {
+      console.log('fetching from ' + resource, id)
+      return new Promise((resolve) => {
+        firebase.firestore().collection(resource).doc(id).onSnapshot(doc => {
+          const item = { ...doc.data(), id: doc.id }
+          commit('setItem', { resource, id, item })
+          resolve(item)
+        })
+      })
     }
   },
 
