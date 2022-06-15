@@ -7,8 +7,7 @@ import ThreadEdit from '@/views/threadEdit.vue'
 import Forum from '@/views/forum.vue'
 import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
-import dataSource from '@/data.json'
-import { findById } from '@/helpers'
+// import dataSource from '@/data.json'
 
 const routes = [
   {
@@ -43,8 +42,8 @@ const routes = [
     path: '/thread/:id',
     name: 'Thread',
     component: Thread,
-    props: true,
-    beforeEnter(to, from, next) {
+    props: true
+    /* beforeEnter(to, from, next) {
       const threadExists = findById(dataSource.threads, to.params.id)
       if (threadExists) {
         return next()
@@ -57,7 +56,7 @@ const routes = [
           hash: to.hash
         })
       }
-    }
+    } */
   },
   {
     path: '/forum/:forumId/thread/create',

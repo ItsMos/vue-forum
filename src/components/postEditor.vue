@@ -21,6 +21,7 @@ export default {
 
   methods: {
     save() {
+      if (this.text.length < 2) return
       const post = {
         text: this.text
       }

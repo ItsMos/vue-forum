@@ -60,7 +60,7 @@ export default {
       return findById(this.posts, id)
     },
     userById(id) {
-      return findById(this.users, id)
+      return findById(this.users, id) || {}
     }
   }
 }

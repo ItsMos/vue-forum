@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-grid">
+  <div v-if="user" class="flex-grid">
     <div class="col-3 push-top">
 
       <userProfileCard v-if="!edit" :user="user" />

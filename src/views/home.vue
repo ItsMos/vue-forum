@@ -5,6 +5,7 @@
 
 <script>
 import categoryList from '@/components/categoryList.vue'
+import { mapActions } from 'vuex'
 
 export default {
   components: {
@@ -15,6 +16,16 @@ export default {
     categories() {
       return this.$store.state.categories
     }
+  },
+
+  methods: {
+    ...mapActions(['fetchAllCategories', 'fetchForums'])
+  },
+
+  async beforeCreate() {
+    const categories = await this.$store.dispatch('fetchAllCategories')
+    const forumIds = categories.map(category => category.forums).flat()
+    this.$store.dispatch('fetchForums', { ids: forumIds })
   }
 }
 </script>
