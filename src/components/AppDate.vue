@@ -14,18 +14,22 @@ dayjs.extend(localizedFormat)
 export default {
   props: {
     timestamp: {
-      type: Number,
+      type: [Number, Object],
       required: true
     }
   },
 
   computed: {
+    normalizedTimeStamp() {
+      return this.timestamp?.seconds || this.timestamp
+    },
+
     formatedDate() {
-      return dayjs.unix(this.timestamp).format('llll')
+      return dayjs.unix(this.normalizedTimeStamp).format('llll')
     },
 
     timeFromNow() {
-      return dayjs.unix(this.timestamp).fromNow()
+      return dayjs.unix(this.normalizedTimeStamp).fromNow()
     }
   }
 }
