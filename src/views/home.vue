@@ -1,16 +1,18 @@
 <template>
-  <h1 class="push-top">Welcome to the forums</h1>
-  <categoryList :categories='categories' />
+  <div v-if="asyncDataStatus_ready" class="container">
+    <h1 class="push-top">Welcome to the forums</h1>
+    <categoryList :categories='categories' />
+  </div>
 </template>
 
 <script>
 import categoryList from '@/components/categoryList.vue'
 import { mapActions, mapState } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
-  components: {
-    categoryList
-  },
+  components: { categoryList },
+  mixins: [asyncDataStatus],
 
   computed: {
     ...mapState(['categories'])
@@ -23,7 +25,8 @@ export default {
   async created () {
     const categories = await this.fetchAllCategories()
     const forumIds = categories.map(category => category.forums).flat()
-    this.fetchForums({ ids: forumIds })
+    await this.fetchForums({ ids: forumIds })
+    this.asyncDataStatus_fetched()
   }
 }
 </script>
