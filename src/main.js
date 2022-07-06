@@ -4,20 +4,15 @@ import router from './router'
 import store from './store'
 import firebaseConfig from './config/firebase'
 import firebase from 'firebase/compat/app'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-/* import specific icons */
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-library.add(faUserSecret)
+import fontAwesome from './plugins/fontAwesome'
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig)
 
 const forumApp = createApp(App)
-forumApp.component('fa', FontAwesomeIcon)
 forumApp.use(router)
 forumApp.use(store)
+forumApp.use(fontAwesome)
 
 const requireComponent = require.context('./components', true, /App[A-Z]\w+\.(vue|js)$/)
 requireComponent.keys().forEach(function (fileName) {
