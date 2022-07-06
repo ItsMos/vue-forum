@@ -5,6 +5,8 @@ export default {
     upsert(state[resource], docToResource(item))
   },
 
+  appendUnsubscribe: (state, { unsubscribe }) => state.unsubscribes.push(unsubscribe),
+  clearAllUnsubscribes(state) { state.unsubscribes = [] },
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
   appendThreadToForum: makeAppendChildToParentMutation({ parent: 'forums', child: 'threads' }),
   appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' }),

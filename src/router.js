@@ -7,6 +7,7 @@ import ThreadEdit from '@/views/threadEdit.vue'
 import Forum from '@/views/forum.vue'
 import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
+import store from './store'
 // import dataSource from '@/data.json'
 
 const routes = [
@@ -73,7 +74,7 @@ const routes = [
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
@@ -84,3 +85,9 @@ export default createRouter({
     }
   }
 })
+
+router.beforeEach(() => {
+  store.dispatch('unsubscribeAllSnaphshots')
+})
+
+export default router
