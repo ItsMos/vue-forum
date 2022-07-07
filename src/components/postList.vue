@@ -22,7 +22,7 @@
         <div class="col-full">
           <postEditor
             v-if="editing == post.id" :post="post"
-            @save="updatePost"
+            @save="handlePostUpdate"
           />
           <p v-else>{{ post.text }}</p>
         </div>
