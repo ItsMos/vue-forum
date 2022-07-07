@@ -4,6 +4,7 @@ import {
   writeBatch,
   doc,
   query,
+  where,
   updateDoc,
   serverTimestamp,
   getDoc,
@@ -32,7 +33,7 @@ export default {
     })
     await batch.commit()
     const newPost = await getDoc(postRef)
-    commit('setItem', { resource: 'posts', item: { ...newPost.data(), id: newPost.id } })
+    commit('setItem', { resource: 'posts', item: docToResource(newPost) })
     commit('appendPostToThread', { childId: newPost.id, parentId: post.threadId })
     commit('appendContributorToThread', { childId: state.authUser, parentId: post.threadId })
   },
@@ -71,7 +72,7 @@ export default {
     await batch.commit()
     const newThread = await getDoc(threadRef)
 
-    commit('setItem', { resource: 'threads', item: { ...newThread.data(), id: newThread.id } })
+    commit('setItem', { resource: 'threads', item: docToResource(newThread) })
     commit('appendThreadToForum', { childId: threadRef.id, parentId: forumId })
     commit('appendThreadToUser', { childId: threadRef.id, parentId: userId })
     await dispatch('createPost', { text, threadId: threadRef.id })
@@ -107,12 +108,29 @@ export default {
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id }),
   fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId }),
 
+  fetchUserPosts: ({ commit }, { userId }) => {
+    return new Promise((resolve, reject) => {
+      const unsubscribe = onSnapshot(
+        query(collection(db, 'posts'), where('userId', '==', userId)),
+        userPosts => {
+          userPosts = userPosts.docs.map(post => {
+            post = docToResource(post)
+            commit('setItem', { resource: 'posts', item: post })
+            return post
+          })
+          resolve(userPosts)
+        }
+      )
+      commit('appendUnsubscribe', { unsubscribe })
+    })
+  },
+
   fetchAllCategories({ commit }) {
     console.log('fetching all categories')
     return new Promise(resolve => {
       const unsubscribe = onSnapshot(query(collection(db, 'categories')), (querySnapshot) => {
         const categories = querySnapshot.docs.map(doc => {
-          const item = { id: doc.id, ...doc.data() }
+          const item = docToResource(doc)
           commit('setItem', { resource: 'categories', item })
           return item
         })
@@ -132,8 +150,8 @@ export default {
     console.log('fetching from ' + resource, id)
     return new Promise((resolve) => {
       const unsubscribe = onSnapshot(doc(db, resource, id), doc => {
-        const item = { ...doc.data(), id: doc.id }
-        commit('setItem', { resource, id, item })
+        const item = docToResource(doc)
+        commit('setItem', { resource, item })
         resolve(item)
       })
       commit('appendUnsubscribe', { unsubscribe })

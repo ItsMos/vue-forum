@@ -39,6 +39,10 @@ export default {
     ...mapGetters({
       user: 'authUser'
     })
+  },
+
+  created() {
+    this.$store.dispatch('fetchUserPosts', { userId: this.user.id })
   }
 }
 
