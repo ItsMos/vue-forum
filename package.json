@@ -13,7 +13,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.0",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.6",
-    "firebase": "^9.8.1",
+    "firebase": "^9.8.4",
     "vue": "^3.0.0",
     "vue-router": "4",
     "vuex": "4"
