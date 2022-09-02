@@ -32,7 +32,7 @@ export default {
   },
 
   created() {
-    this.fetchAuthUser()
+    setTimeout(this.fetchAuthUser, 0)
     NProgress.configure({
       speed: 200,
       showSpinner: false
