@@ -41,8 +41,9 @@ export default {
     })
   },
 
-  created() {
-    this.$store.dispatch('fetchUserPosts', { userId: this.user.id })
+  async created() {
+    await this.$store.dispatch('fetchUserPosts', { userId: this.user.id })
+    this.$emit('ready')
   }
 }
 
