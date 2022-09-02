@@ -5,10 +5,20 @@ import store from './store'
 import firebaseConfig from './config/firebase'
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import fontAwesome from './plugins/fontAwesome'
 
 // Initialize Firebase
 export const db = getFirestore(initializeApp(firebaseConfig))
+onAuthStateChanged(getAuth(), user => {
+  console.log('state changed', user)
+  if (user) {
+    // trying to fix no return of user data happening
+    setTimeout(() => {
+      store.dispatch('fetchAuthUser')
+    }, 0)
+  }
+})
 
 const forumApp = createApp(App)
 forumApp.use(router)

@@ -8,9 +8,11 @@ import {
   updateDoc,
   serverTimestamp,
   getDoc,
+  setDoc,
   arrayUnion,
   increment
 } from 'firebase/firestore'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
 import { db } from '../main'
 import { findById, docToResource } from '@/helpers'
 
@@ -97,6 +99,29 @@ export default {
     return docToResource(newThread)
   },
 
+  async registerUserWithEmailAndPassword({ dispatch }, user) {
+    const auth = getAuth()
+    const result = await createUserWithEmailAndPassword(auth, user.email, user.password)
+    delete user.password
+    await dispatch('createUser', { id: result.user.uid, ...user })
+  },
+  async signInWithEmailAndPassword(ctx, { email, password }) {
+    return signInWithEmailAndPassword(getAuth(), email, password)
+  },
+  async signOut({ commit }) {
+    await getAuth().signOut()
+    commit('setAuthId', null)
+  },
+  async createUser({ commit }, user) {
+    user.registeredAt = serverTimestamp()
+    user.usernameLower = user.username.toLowerCase()
+    user.email = user.email.toLowerCase()
+    const userRef = doc(db, 'users', user.id)
+    await setDoc(userRef, user)
+    const newUser = await getDoc(userRef)
+    commit('setItem', { resource: 'users', item: newUser })
+    return docToResource(newUser)
+  },
   updateUser({ commit }, user) {
     commit('setItem', { resource: 'users', item: user, userId: user.id })
   },
@@ -106,7 +131,12 @@ export default {
   fetchThread: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'threads', id }),
   fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id }),
   fetchUser: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'users', id }),
-  fetchAuthUser: ({ dispatch, state }) => dispatch('fetchItem', { resource: 'users', id: state.authId }),
+  fetchAuthUser: async ({ dispatch, commit }) => {
+    const userId = getAuth().currentUser?.uid
+    if (!userId) return
+    dispatch('fetchItem', { resource: 'users', id: userId })
+    commit('setAuthId', userId)
+  },
 
   fetchUserPosts: ({ commit }, { userId }) => {
     return new Promise((resolve, reject) => {

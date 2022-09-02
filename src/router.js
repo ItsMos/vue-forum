@@ -5,6 +5,8 @@ import Thread from '@/views/thread.vue'
 import ThreadCreate from '@/views/threadCreate.vue'
 import ThreadEdit from '@/views/threadEdit.vue'
 import Forum from '@/views/forum.vue'
+import Register from '@/views/register.vue'
+import SignIn from '@/views/signIn.vue'
 import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
 import store from './store'
@@ -70,6 +72,16 @@ const routes = [
     name: 'ThreadEdit',
     component: ThreadEdit,
     props: true
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
+  },
+  {
+    path: '/signin',
+    name: 'SignIn',
+    component: SignIn
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]

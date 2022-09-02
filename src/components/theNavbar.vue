@@ -35,6 +35,9 @@
             </ul>
           </div>
         </li>
+        <li @click="$store.dispatch('signOut')" v-if="user" class="navbar-item"><a>Sign Out</a></li>
+        <li v-if="!user" class="navbar-item"><router-link :to="{name: 'SignIn'}">Sign In</router-link></li>
+        <li v-if="!user" class="navbar-item"><router-link :to="{name: 'Register'}">Register</router-link></li>
       </ul>
 
       <ul>

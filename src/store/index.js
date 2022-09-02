@@ -10,9 +10,7 @@ export default createStore({
     threads: [],
     posts: [],
     users: [],
-    // authId: 'rpbB8C6ifrYmNDufMERWfQUoa202'
-    // authId: 'VXjpr2WHa8Ux4Bnggym8QFLdv5C3'
-    authId: 'u4r8XCziZEWEXsj2UIKNHBoDh0n2',
+    authId: null,
     unsubscribes: []
   },
 
