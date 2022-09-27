@@ -4,7 +4,7 @@ import router from './router'
 import store from './store'
 import firebaseConfig from './config/firebase'
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import fontAwesome from './plugins/fontAwesome'
 
@@ -12,12 +12,12 @@ import fontAwesome from './plugins/fontAwesome'
 export const db = getFirestore(initializeApp(firebaseConfig))
 onAuthStateChanged(getAuth(), user => {
   if (user) {
-    // trying to fix no return of user data happening
-    setTimeout(() => {
-      store.dispatch('fetchAuthUser')
-    }, 0)
+    store.dispatch('fetchAuthUser')
   }
 })
+// need to call firebase first with any request before
+// trying to fetchItem or it will fail to return data.
+getDoc(doc(db, 'posts', 'a'))
 
 const forumApp = createApp(App)
 forumApp.use(router)
