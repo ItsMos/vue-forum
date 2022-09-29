@@ -11,6 +11,7 @@ import fontAwesome from './plugins/fontAwesome'
 // Initialize Firebase
 export const db = getFirestore(initializeApp(firebaseConfig))
 onAuthStateChanged(getAuth(), user => {
+  store.dispatch('unsubscribeAuthUserSnapshot')
   if (user) {
     store.dispatch('fetchAuthUser')
   }

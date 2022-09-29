@@ -36,7 +36,7 @@
 
       </form>
       <div class="text-center push-top">
-        <button class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign up with Google</button>
+        <button @click='signInWithGoogle' class="btn-red btn-xsmall"><i class="fa fa-google fa-btn"></i>Sign up with Google</button>
       </div>
     </div>
   </div>
@@ -46,7 +46,7 @@
 import { defineEmits, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-const store = useStore()
+const { dispatch } = useStore()
 const router = useRouter()
 
 const emit = defineEmits(['ready'])
@@ -60,7 +60,12 @@ const form = reactive({
 })
 
 async function register() {
-  await store.dispatch('registerUserWithEmailAndPassword', form)
+  await dispatch('registerUserWithEmailAndPassword', form)
+  router.push('/')
+}
+
+async function signInWithGoogle() {
+  await dispatch('signInWithGoogle')
   router.push('/')
 }
 

@@ -12,7 +12,7 @@ import {
   arrayUnion,
   increment
 } from 'firebase/firestore'
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { db } from '../main'
 import { findById, docToResource } from '@/helpers'
 
@@ -100,13 +100,21 @@ export default {
   },
 
   async registerUserWithEmailAndPassword({ dispatch }, user) {
-    const auth = getAuth()
-    const result = await createUserWithEmailAndPassword(auth, user.email, user.password)
+    const result = await createUserWithEmailAndPassword(getAuth(), user.email, user.password)
     delete user.password
     await dispatch('createUser', { id: result.user.uid, ...user })
   },
   async signInWithEmailAndPassword(ctx, { email, password }) {
     return signInWithEmailAndPassword(getAuth(), email, password)
+  },
+  async signInWithGoogle({ dispatch }) {
+    const provider = new GoogleAuthProvider()
+    const result = await signInWithPopup(getAuth(), provider)
+    const user = result.user
+    const userDoc = await getDoc(doc(db, 'users', user.uid))
+    if (!userDoc.exists()) {
+      return dispatch('createUser', { id: user.uid, name: user.displayName, email: user.email, username: user.email, avatar: user.photoURL })
+    }
   },
   async signOut({ commit }) {
     await getAuth().signOut()
@@ -134,7 +142,13 @@ export default {
   fetchAuthUser: async ({ dispatch, commit }) => {
     const userId = getAuth().currentUser?.uid
     if (!userId) return
-    dispatch('fetchItem', { resource: 'users', id: userId })
+    dispatch('fetchItem', {
+      resource: 'users',
+      id: userId,
+      handleUnsubscribe: unsubscribe => {
+        commit('setAuthUserUnsubscribe', unsubscribe)
+      }
+    })
     commit('setAuthId', userId)
   },
 
@@ -176,7 +190,7 @@ export default {
   fetchPosts: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'posts', ids }),
   fetchUsers: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'users', ids }),
 
-  fetchItem({ commit }, { id, resource }) {
+  fetchItem({ commit }, { id, resource, handleUnsubscribe = null }) {
     console.log('fetching from ' + resource, id)
     return new Promise((resolve) => {
       const unsubscribe = onSnapshot(doc(db, resource, id), doc => {
@@ -184,7 +198,11 @@ export default {
         commit('setItem', { resource, item })
         resolve(item)
       })
-      commit('appendUnsubscribe', { unsubscribe })
+      if (handleUnsubscribe) {
+        handleUnsubscribe(unsubscribe)
+      } else {
+        commit('appendUnsubscribe', { unsubscribe })
+      }
     })
   },
 
@@ -195,5 +213,11 @@ export default {
   async unsubscribeAllSnaphshots({ state, commit }) {
     state.unsubscribes.forEach(unsubscribe => unsubscribe())
     commit('clearAllUnsubscribes')
+  },
+  async unsubscribeAuthUserSnapshot({ state, commit }) {
+    if (state.authUserUnsubscribe) {
+      state.authUserUnsubscribe()
+      commit('setAuthUserUnsubscribe', null)
+    }
   }
 }

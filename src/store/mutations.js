@@ -8,6 +8,9 @@ export default {
   setAuthId(state, id) {
     state.authId = id
   },
+  setAuthUserUnsubscribe: (state, unsubscribe) => {
+    state.authUserUnsubscribe = unsubscribe
+  },
   appendUnsubscribe: (state, { unsubscribe }) => state.unsubscribes.push(unsubscribe),
   clearAllUnsubscribes(state) { state.unsubscribes = [] },
   appendPostToThread: makeAppendChildToParentMutation({ parent: 'threads', child: 'posts' }),
