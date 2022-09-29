@@ -76,7 +76,8 @@ export default {
     // fetch posts
     const posts = await this.fetchPosts({ ids: thread.posts })
     // fetch the user for each post
-    const users = posts.map(post => post.userId).concat(thread.userId)
+    let users = posts.map(post => post.userId)
+    users = users.filter((id, index) => users.indexOf(id) === index)
     await this.fetchUsers({ ids: users })
     this.asyncDataStatus_fetched()
   }
