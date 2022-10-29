@@ -6,6 +6,7 @@ import firebaseConfig from './config/firebase'
 import { initializeApp } from 'firebase/app'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
 import fontAwesome from './plugins/fontAwesome'
+import clickOutsideDirective from './plugins/clickOutsideDirective'
 
 // Initialize Firebase
 export const db = getFirestore(initializeApp(firebaseConfig))
@@ -18,6 +19,7 @@ const forumApp = createApp(App)
 forumApp.use(router)
 forumApp.use(store)
 forumApp.use(fontAwesome)
+forumApp.use(clickOutsideDirective)
 
 const requireComponent = require.context('./components', true, /App[A-Z]\w+\.(vue|js)$/)
 requireComponent.keys().forEach(function (fileName) {

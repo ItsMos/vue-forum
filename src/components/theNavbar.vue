@@ -17,7 +17,11 @@
       <ul>
 
         <li v-if="user" class="navbar-user">
-          <a @click.prevent="userDropdownOpen = !userDropdownOpen" id="user-dropdown-toggle">
+          <a
+            v-click-outside="()=> userDropdownOpen = false"
+            @click.prevent="userDropdownOpen = !userDropdownOpen"
+            id="user-dropdown-toggle"
+          >
             <img class="avatar-small" :src="user.avatar" :alt="`${user.name}'s profile picture`">
             <span>
               {{user.name}}
@@ -45,15 +49,7 @@
         <li class="navbar-item">
           <router-link :to="{name: 'Home'}">Home</router-link>
         </li>
-        <!-- <li class="navbar-item">
-          <router-link to="/category">Category</router-link>
-        </li>
-        <li class="navbar-item">
-          <router-link to="/forum">Forum</router-link>
-        </li>
-        <li class="navbar-item">
-          <router-link to="/thread">Thread</router-link>
-        </li>
+        <!--
         Show these option only on mobile
         <li class="navbar-item mobile-only">
           <router-link to="/profile">My Profile</router-link>
@@ -80,7 +76,3 @@ export default {
 }
 
 </script>
-
-<style>
-
-</style>
