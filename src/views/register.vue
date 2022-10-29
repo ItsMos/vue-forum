@@ -60,12 +60,12 @@ const form = reactive({
 })
 
 async function register() {
-  await dispatch('registerUserWithEmailAndPassword', form)
+  await dispatch('auth/registerUserWithEmailAndPassword', form)
   router.push('/')
 }
 
 async function signInWithGoogle() {
-  await dispatch('signInWithGoogle')
+  await dispatch('auth/signInWithGoogle')
   router.push('/')
 }
 

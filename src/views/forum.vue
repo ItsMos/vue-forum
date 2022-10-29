@@ -39,10 +39,10 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['thread']),
+    ...mapGetters('threads', ['thread']),
 
     forum () {
-      return findById(this.$store.state.forums, this.id)
+      return findById(this.$store.state.forums.items, this.id)
     },
 
     threads () {
@@ -52,7 +52,9 @@ export default {
   },
 
   methods: {
-    ...mapActions(['fetchForum', 'fetchThreads', 'fetchUsers'])
+    ...mapActions('forums', ['fetchForum']),
+    ...mapActions('threads', ['fetchThreads']),
+    ...mapActions('users', ['fetchUsers'])
   },
 
   async created() {
@@ -63,7 +65,3 @@ export default {
   }
 }
 </script>
-
-<style>
-
-</style>

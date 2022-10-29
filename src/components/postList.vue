@@ -27,7 +27,7 @@
           <p v-else>{{ post.text }}</p>
         </div>
         <a
-          v-if="post.userId === $store.state.authId"
+          v-if="post.userId === $store.state.auth.authId"
           @click.prevent="toggleEditMode(post.id)"
           href="#"
           style="margin-left: auto; padding-left: 10px;"
@@ -66,10 +66,10 @@ export default {
   },
 
   methods: {
-    ...mapActions(['updatePost']),
+    ...mapActions('posts', ['updatePost']),
 
     userById(id) {
-      return this.$store.getters.user(id)
+      return this.$store.getters['users/user'](id)
     },
 
     toggleEditMode(id) {

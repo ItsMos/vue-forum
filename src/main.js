@@ -5,17 +5,11 @@ import store from './store'
 import firebaseConfig from './config/firebase'
 import { initializeApp } from 'firebase/app'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import fontAwesome from './plugins/fontAwesome'
 
 // Initialize Firebase
 export const db = getFirestore(initializeApp(firebaseConfig))
-onAuthStateChanged(getAuth(), user => {
-  store.dispatch('unsubscribeAuthUserSnapshot')
-  if (user) {
-    store.dispatch('fetchAuthUser')
-  }
-})
+
 // need to call firebase first with any request before
 // trying to fetchItem or it will fail to return data.
 getDoc(doc(db, 'posts', 'a'))

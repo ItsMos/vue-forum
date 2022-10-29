@@ -10,7 +10,7 @@ import SignIn from '@/views/signIn.vue'
 import Profile from '@/views/profile.vue'
 import NotFound from '@/views/notFound404.vue'
 import store from './store'
-// import dataSource from '@/data.json'
+import { findById } from './helpers'
 
 const routes = [
   {
@@ -21,13 +21,15 @@ const routes = [
   {
     path: '/me',
     name: 'Profile',
-    component: Profile
+    component: Profile,
+    meta: { requiresAuth: true }
   },
   {
     path: '/me/edit',
     name: 'ProfileEdit',
     component: Profile,
-    props: { edit: true }
+    props: { edit: true },
+    meta: { requiresAuth: true }
   },
   {
     path: '/category/:id',
@@ -45,9 +47,10 @@ const routes = [
     path: '/thread/:id',
     name: 'Thread',
     component: Thread,
-    props: true
-    /* beforeEnter(to, from, next) {
-      const threadExists = findById(dataSource.threads, to.params.id)
+    props: true,
+    async beforeEnter(to, from, next) {
+      await store.dispatch('threads/fetchThread', { id: to.params.id })
+      const threadExists = findById(store.state.threads.items, to.params.id)
       if (threadExists) {
         return next()
       } else {
@@ -59,29 +62,41 @@ const routes = [
           hash: to.hash
         })
       }
-    } */
+    }
   },
   {
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
     component: ThreadEdit,
-    props: true
+    props: true,
+    meta: { requiresAuth: true }
   },
   {
     path: '/register',
     name: 'Register',
-    component: Register
+    component: Register,
+    meta: { requiresGuest: true }
   },
   {
     path: '/signin',
     name: 'SignIn',
-    component: SignIn
+    component: SignIn,
+    meta: { requiresGuest: true }
+  },
+  {
+    path: '/logout',
+    name: 'SignOut',
+    async beforeEnter(to, from) {
+      await store.dispatch('auth/signOut')
+      return { name: 'Home' }
+    }
   },
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
 ]
@@ -98,8 +113,16 @@ const router = createRouter({
   }
 })
 
-router.beforeEach(() => {
+router.beforeEach(async (to, from) => {
+  await store.dispatch('auth/initAuthentication')
   store.dispatch('unsubscribeAllSnaphshots')
+  if (to.meta.requiresAuth && !store.state.auth.authId) {
+    return { name: 'SignIn', query: { redirectTo: to.path } }
+  }
+
+  if (to.meta.requiresGuest && store.state.auth.authId) {
+    return { name: 'Home' }
+  }
 })
 
 export default router

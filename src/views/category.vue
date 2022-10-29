@@ -24,14 +24,15 @@ export default {
 
   computed: {
     category() {
-      return findById(this.$store.state.categories, this.id) || {}
+      return findById(this.$store.state.categories.items, this.id) || {}
     }
   },
 
   methods: {
-    ...mapActions(['fetchCategory', 'fetchForums']),
+    ...mapActions('categories', ['fetchCategory']),
+    ...mapActions('forums', ['fetchForums']),
     getForumsForCategory(category) {
-      return this.$store.state.forums.filter(f => f.categoryId === category.id)
+      return this.$store.state.forums.items.filter(f => f.categoryId === category.id)
     }
   },
 

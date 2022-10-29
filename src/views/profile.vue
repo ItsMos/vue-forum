@@ -28,22 +28,25 @@ import postList from '@/components/postList.vue'
 import userProfileCard from '@/components/userProfileCard.vue'
 import userProfileCardEditor from '@/components/userProfileCardEditor.vue'
 import { mapGetters } from 'vuex'
+import asyncDataStatus from '@/mixins/asyncDataStatus'
 export default {
   components: { postList, userProfileCard, userProfileCardEditor },
+
+  mixins: [asyncDataStatus],
 
   props: {
     edit: { type: Boolean, default: false }
   },
 
   computed: {
-    ...mapGetters({
+    ...mapGetters('auth', {
       user: 'authUser'
     })
   },
 
   async created() {
-    await this.$store.dispatch('fetchUserPosts', { userId: this.user.id })
-    this.$emit('ready')
+    await this.$store.dispatch('auth/fetchAuthUserPosts', { userId: this.user.id })
+    this.asyncDataStatus_fetched()
   }
 }
 

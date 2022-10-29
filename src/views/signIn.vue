@@ -31,11 +31,12 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { defineEmits } from 'vue'
 const { dispatch } = useStore()
 const router = useRouter()
+const route = useRoute()
 const emit = defineEmits(['ready'])
 
 const form = {
@@ -45,16 +46,22 @@ const form = {
 
 async function signIn() {
   try {
-    await dispatch('signInWithEmailAndPassword', form)
-    router.push('/')
+    await dispatch('auth/signInWithEmailAndPassword', form)
+    successRedirect()
   } catch (error) {
     alert(error.message)
   }
 }
 
 async function signInWithGoogle() {
-  await dispatch('signInWithGoogle')
-  router.push('/')
+  await dispatch('auth/signInWithGoogle')
+  successRedirect()
 }
+
+function successRedirect() {
+  const redirectTo = route.query.redirectTo || { name: 'Home' }
+  router.push(redirectTo)
+}
+
 emit('ready')
 </script>

@@ -21,7 +21,7 @@
         <div class="threads-count">
           <p>
             <span class="count">{{ forum.threads?.length || 0 }}</span>
-            {{ forum.threads?.length > 1? 'threads' : 'thread' }}
+            {{ (!forum.threads || forum.threads?.length > 1) ? 'threads' : 'thread' }}
           </p>
         </div>
 
