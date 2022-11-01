@@ -1,7 +1,7 @@
 import debounce from 'lodash/debounce'
 const pageScrollDirective = {
   mounted(el, binding) {
-    el._pageScroll_ = debounce(() => { console.log('scroll'); binding.value() }, 200, { leading: true })
+    el._pageScroll_ = debounce(binding.value, 200, { leading: true })
     addEventListener('scroll', el._pageScroll_)
   },
   unmounted(el) {

@@ -1,4 +1,4 @@
-import { collection, doc, query, where, getDoc, getDocs } from 'firebase/firestore'
+import { collection, doc, query, where, getDoc, getDocs, orderBy, limit, startAfter as qStartAfter } from 'firebase/firestore'
 import { db } from '@/main'
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth'
 import { docToResource } from '@/helpers'
@@ -69,8 +69,19 @@ export default {
       commit('setAuthId', userId)
     },
 
-    fetchAuthUserPosts: async ({ commit }, { userId }) => {
-      let res = await getDocs(query(collection(db, 'posts'), where('userId', '==', userId)))
+    fetchAuthUserPosts: async ({ commit, state }, { startAfter }) => {
+      console.log('Fetching auth user posts')
+      let q = query(collection(db, 'posts'),
+        where('userId', '==', state.authId),
+        orderBy('publishedAt', 'desc'),
+        limit(10)
+      )
+      if (startAfter) {
+        startAfter = await getDoc(doc(db, 'posts', startAfter.id))
+        q = query(q, qStartAfter(startAfter))
+      }
+
+      let res = await getDocs(q)
       res = res.docs.map(post => {
         post = docToResource(post)
         commit('setItem', { resource: 'posts', item: post }, { root: true })

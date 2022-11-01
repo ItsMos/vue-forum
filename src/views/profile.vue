@@ -29,29 +29,34 @@ import userProfileCard from '@/components/userProfileCard.vue'
 import userProfileCardEditor from '@/components/userProfileCardEditor.vue'
 import { mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import infiniteScroll from '@/mixins/infiniteScroll'
 export default {
   components: { postList, userProfileCard, userProfileCardEditor },
 
-  mixins: [asyncDataStatus],
+  mixins: [asyncDataStatus, infiniteScroll],
 
   props: {
     edit: { type: Boolean, default: false }
   },
 
   computed: {
-    ...mapGetters('auth', {
-      user: 'authUser'
-    })
+    ...mapGetters('auth', { user: 'authUser' }),
+    lastPostFetched() {
+      if (this.user.posts.length === 0) return null
+      return this.user.posts[this.user.posts.length - 1]
+    }
   },
 
   async created() {
-    await this.$store.dispatch('auth/fetchAuthUserPosts', { userId: this.user.id })
+    await this.$store.dispatch('auth/fetchAuthUserPosts', { startAfter: this.lastPostFetched })
     this.asyncDataStatus_fetched()
+    this.setupInfiniteScroll(async () => {
+      const posts = await this.$store.dispatch('auth/fetchAuthUserPosts', { startAfter: this.lastPostFetched })
+      if (posts && this.user.posts.length >= this.user.postsCount) {
+        this.removeInfiniteScroll()
+      }
+    })
   }
 }
 
 </script>
-
-<style>
-
-</style>
