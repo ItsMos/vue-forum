@@ -1,6 +1,6 @@
 import { onSnapshot, query, collection } from 'firebase/firestore'
 import { db } from '@/main'
-import { docToResource } from '@/helpers'
+import { docToResource, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 export default {
   namespaced: true,
   state: {
@@ -9,8 +9,8 @@ export default {
 
   getters: {},
   actions: {
-    fetchCategory: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'categories', id }, { root: true }),
-    fetchCategories: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'categories', ids }, { root: true }),
+    fetchCategory: makeFetchItemAction({ resource: 'categories' }),
+    fetchCategories: makeFetchItemsAction({ resource: 'categories' }),
     fetchAllCategories({ commit }) {
       console.log('fetching all categories')
       return new Promise(resolve => {

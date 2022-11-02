@@ -3,10 +3,13 @@ import { db } from '@/main'
 import { docToResource } from '@/helpers'
 
 export default {
-  fetchItem({ commit }, { id, resource, handleUnsubscribe = null }) {
+  fetchItem({ commit }, { id, resource, handleUnsubscribe = null, once = false }) {
     console.log('fetching from ' + resource, id)
     return new Promise((resolve) => {
       const unsubscribe = onSnapshot(doc(db, resource, id), doc => {
+        if (once) {
+          unsubscribe()
+        }
         if (doc.exists()) {
           const item = docToResource(doc)
           commit('setItem', { resource, item })

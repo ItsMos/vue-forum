@@ -1,6 +1,6 @@
 import { collection, writeBatch, doc, updateDoc, serverTimestamp, getDoc, arrayUnion, increment } from 'firebase/firestore'
 import { db } from '@/main'
-import { docToResource } from '@/helpers'
+import { docToResource, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
 export default {
   namespaced: true,
   state: {
@@ -46,8 +46,8 @@ export default {
       commit('setItem', { resource: 'posts', item: updatedPost }, { root: true })
     },
 
-    fetchPost: ({ dispatch }, { id }) => dispatch('fetchItem', { resource: 'posts', id }, { root: true }),
-    fetchPosts: ({ dispatch }, { ids }) => dispatch('fetchItems', { resource: 'posts', ids }, { root: true })
+    fetchPost: makeFetchItemAction({ resource: 'posts' }),
+    fetchPosts: makeFetchItemsAction({ resource: 'posts' })
   },
   mutations: {}
 }
