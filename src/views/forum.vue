@@ -18,6 +18,12 @@
 
     <div class="col-full push-top">
       <thread-list :threads='threads' />
+
+      <v-pagination
+        v-model="page"
+        :pages="totalPages"
+        active-color="#57AD8D"
+      />
     </div>
   </div>
 </template>
@@ -25,7 +31,7 @@
 <script>
 import threadList from '@/components/threadList.vue'
 import { findById } from '@/helpers'
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
 
 export default {
@@ -38,30 +44,53 @@ export default {
     }
   },
 
-  computed: {
-    ...mapGetters('threads', ['thread']),
+  data() {
+    return {
+      page: parseInt(this.$route.query.page) || 1,
+      perPage: 10
+    }
+  },
 
+  computed: {
     forum () {
       return findById(this.$store.state.forums.items, this.id)
     },
 
     threads () {
       if (!this.forum) return []
-      return this.forum.threads.map(threadId => this.thread(threadId))
+      return this.$store.state.threads.items
+        .filter(th => th.forumId === this.forum.id)
+        .map(th => this.$store.getters['threads/thread'](th.id))
+    },
+
+    threadCount() {
+      return this.forum.threads.length
+    },
+
+    totalPages() {
+      if (!this.threadCount) return 0
+      return Math.ceil(this.threadCount / this.perPage)
     }
   },
 
   methods: {
     ...mapActions('forums', ['fetchForum']),
-    ...mapActions('threads', ['fetchThreads']),
+    ...mapActions('threads', ['fetchThreadsByPage']),
     ...mapActions('users', ['fetchUsers'])
   },
 
   async created() {
     const forum = await this.fetchForum({ id: this.id })
-    const threads = await this.fetchThreads({ ids: forum.threads })
+    if (this.page > this.totalPages) this.page = 1
+    const threads = await this.fetchThreadsByPage({ ids: forum.threads, page: this.page, perPage: this.perPage })
     await this.fetchUsers({ ids: threads.map(th => th.userId) })
     this.asyncDataStatus_fetched()
+  },
+
+  watch: {
+    async page() {
+      this.$router.push({ query: { page: this.page } })
+    }
   }
 }
 </script>
