@@ -32,13 +32,14 @@ import postList from '@/components/postList.vue'
 import postEditor from '@/components/postEditor.vue'
 import { mapActions, mapGetters } from 'vuex'
 import asyncDataStatus from '@/mixins/asyncDataStatus'
+import useNotifications from '@/composables/useNotifications'
+import difference from 'lodash/difference'
 
 export default {
   components: {
     postList,
     postEditor
   },
-  mixins: [asyncDataStatus],
 
   props: {
     id: {
@@ -46,6 +47,13 @@ export default {
       required: true
     }
   },
+
+  setup() {
+    const { addNotification } = useNotifications()
+    return { addNotification }
+  },
+
+  mixins: [asyncDataStatus],
 
   computed: {
     ...mapGetters('auth', ['authUser']),
@@ -74,19 +82,43 @@ export default {
         threadId: this.id
       }
       this.createPost(post)
+    },
+
+    async fetchPostsWithUsers(ids) {
+      // fetch posts
+      const posts = await this.fetchPosts({
+        ids,
+        onSnapshot: ({ isLocal, previousItem }) => {
+          if (!this.asyncDataStatus_ready || isLocal ||
+            (previousItem?.edited && !previousItem?.edited?.at)
+          ) return
+          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
+        }
+      })
+      // fetch the user for each post
+      let users = posts.map(post => post.userId)
+      users = users.filter((id, index) => users.indexOf(id) === index)
+      await this.fetchUsers({ ids: users })
     }
   },
 
   async created() {
     // fetch thread
-    const thread = await this.fetchThread({ id: this.id })
+    const thread = await this.fetchThread({
+      id: this.id,
+      onSnapshot: ({ isLocal, item, previousItem }) => {
+        if (!this.asyncDataStatus_ready || isLocal) return
+        const newPostIds = difference(item.posts, previousItem.posts)
+        const hasNewPosts = newPostIds.length > 0
+        if (hasNewPosts) {
+          this.fetchPostsWithUsers(newPostIds)
+        } else {
+          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
+        }
+      }
+    })
 
-    // fetch posts
-    const posts = await this.fetchPosts({ ids: thread.posts })
-    // fetch the user for each post
-    let users = posts.map(post => post.userId)
-    users = users.filter((id, index) => users.indexOf(id) === index)
-    await this.fetchUsers({ ids: users })
+    this.fetchPostsWithUsers(thread.posts)
     this.asyncDataStatus_fetched()
   }
 }
