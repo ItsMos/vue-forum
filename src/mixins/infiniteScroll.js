@@ -2,14 +2,14 @@ export default {
   data() {
     return {
       handler: null,
-      lastTrigger: null
+      lastTrigger: null,
     }
   },
 
   methods: {
     isScrolledToBototm() {
       // is at 95% of the page
-      return innerHeight + scrollY >= document.body.offsetHeight * 95 / 100
+      return innerHeight + scrollY >= (document.body.offsetHeight * 95) / 100
     },
 
     wrapperFunc() {
@@ -28,6 +28,6 @@ export default {
     removeInfiniteScroll() {
       removeEventListener('scroll', this.wrapperFunc)
       this.handler = null
-    }
-  }
+    },
+  },
 }

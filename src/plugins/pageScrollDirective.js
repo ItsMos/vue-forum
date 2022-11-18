@@ -6,7 +6,7 @@ const pageScrollDirective = {
   },
   unmounted(el) {
     removeEventListener('scroll', el._pageScroll_)
-  }
+  },
 }
 export default (app) => {
   app.directive('page-scroll', pageScrollDirective)

@@ -16,13 +16,13 @@ export default createStore({
     threads,
     posts,
     users,
-    auth
+    auth,
   },
   state: {
-    unsubscribes: []
+    unsubscribes: [],
   },
 
   getters,
   actions,
-  mutations
+  mutations,
 })

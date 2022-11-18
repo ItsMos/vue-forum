@@ -1,18 +1,18 @@
 // Imports
-const { initializeFirebaseApp, restore } = require("firestore-export-import");
-const serviceAccount = require("./serviceAccount.json");
-const fs = require("fs");
-const tempFileName = `${__dirname}/data-temp.json`;
+const { initializeFirebaseApp, restore } = require('firestore-export-import')
+const serviceAccount = require('./serviceAccount.json')
+const fs = require('fs')
+const tempFileName = `${__dirname}/data-temp.json`
 
 // procedure
-(async () => {
-  const fileContents = fs.readFileSync(`${__dirname}/src/data.json`, "utf8");
-  const data = JSON.parse(fileContents);
-  const transformed = transformDataForFirestore(data);
-  fs.writeFileSync(tempFileName, JSON.stringify(transformed));
-  await jsonToFirestore();
-  fs.unlinkSync(tempFileName);
-})();
+;(async () => {
+  const fileContents = fs.readFileSync(`${__dirname}/src/data.json`, 'utf8')
+  const data = JSON.parse(fileContents)
+  const transformed = transformDataForFirestore(data)
+  fs.writeFileSync(tempFileName, JSON.stringify(transformed))
+  await jsonToFirestore()
+  fs.unlinkSync(tempFileName)
+})()
 
 // Helper Functions
 // -------------------------------------
@@ -20,14 +20,14 @@ const tempFileName = `${__dirname}/data-temp.json`;
 // JSON To Firestore
 async function jsonToFirestore() {
   try {
-    console.log("Initialzing Firebase");
-    await initializeFirebaseApp(serviceAccount);
-    console.log("Firebase Initialized");
+    console.log('Initialzing Firebase')
+    await initializeFirebaseApp(serviceAccount)
+    console.log('Firebase Initialized')
 
-    await restore(tempFileName);
-    console.log("Upload Success");
+    await restore(tempFileName)
+    console.log('Upload Success')
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
@@ -35,16 +35,16 @@ async function jsonToFirestore() {
 // as ids in firestore
 // must use keyed object (id being the key) instead of array of records
 function transformDataForFirestore(data) {
-  const collections = data;
-  delete collections.stats;
-  const collectionsById = {};
+  const collections = data
+  delete collections.stats
+  const collectionsById = {}
   Object.keys(collections).forEach((collectionKey) => {
-    collectionsById[collectionKey] = {};
-    const collection = collections[collectionKey];
+    collectionsById[collectionKey] = {}
+    const collection = collections[collectionKey]
     collection.forEach((record) => {
-      collectionsById[collectionKey][record.id] = record;
-      delete collectionsById[collectionKey][record.id].id;
-    });
-  });
-  return collectionsById;
+      collectionsById[collectionKey][record.id] = record
+      delete collectionsById[collectionKey][record.id].id
+    })
+  })
+  return collectionsById
 }

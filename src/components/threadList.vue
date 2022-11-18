@@ -6,31 +6,42 @@
       <div class="thread" v-for="thread in threads" :key="thread.id">
         <div>
           <p>
-            <router-link :to="{name: 'Thread', params: {id: thread.id}}">{{ thread.title }}</router-link>
+            <router-link :to="{ name: 'Thread', params: { id: thread.id } }">{{
+              thread.title
+            }}</router-link>
           </p>
           <p class="text-faded text-xsmall">
-            By <a href="#">{{ userById(thread.userId).name }}</a>, <AppDate :timestamp='thread.publishedAt'/>.
+            By <a href="#">{{ userById(thread.userId).name }}</a
+            >, <AppDate :timestamp="thread.publishedAt" />.
           </p>
         </div>
 
         <div class="activity">
           <p class="replies-count">
-            {{ thread.repliesCount }} {{ (thread.repliesCount > 1 || thread.repliesCount === 0) ? "replies" : "reply" }}
+            {{ thread.repliesCount }}
+            {{
+              thread.repliesCount > 1 || thread.repliesCount === 0
+                ? 'replies'
+                : 'reply'
+            }}
           </p>
 
-          <img class="avatar-medium"
-              :src="userById(thread.userId).avatar"
-              alt="">
+          <img
+            class="avatar-medium"
+            :src="userById(thread.userId).avatar"
+            alt=""
+          />
 
           <div>
             <p class="text-xsmall">
               <a href="#">{{ userById(thread.userId).name }}</a>
             </p>
-            <p class="text-xsmall text-faded"><AppDate :timestamp='thread.publishedAt'/></p>
+            <p class="text-xsmall text-faded">
+              <AppDate :timestamp="thread.publishedAt" />
+            </p>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -41,8 +52,8 @@ export default {
   props: {
     threads: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
@@ -52,7 +63,7 @@ export default {
 
     users() {
       return this.$store.state.users.items
-    }
+    },
   },
 
   methods: {
@@ -61,11 +72,9 @@ export default {
     },
     userById(id) {
       return findById(this.users, id) || {}
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -15,8 +15,8 @@ export default {
   props: {
     timestamp: {
       type: [Number, Object],
-      required: true
-    }
+      required: true,
+    },
   },
 
   computed: {
@@ -30,11 +30,9 @@ export default {
 
     timeFromNow() {
       return dayjs.unix(this.normalizedTimeStamp).fromNow()
-    }
-  }
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

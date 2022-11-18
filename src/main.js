@@ -25,16 +25,15 @@ forumApp.use(clickOutsideDirective)
 forumApp.use(pageScrollDirective)
 forumApp.use(vPagination)
 
-const requireComponent = require.context('./components', true, /App[A-Z]\w+\.(vue|js)$/)
-requireComponent.keys().forEach(function (fileName) {
-  let baseComponentConfig = requireComponent(fileName)
-  baseComponentConfig = baseComponentConfig.default || baseComponentConfig
-  const baseComponentName = baseComponentConfig.name || (
-    fileName
-      .replace(/^.+\//, '')
-      .replace(/\.\w+$/, '')
-  )
-  forumApp.component(baseComponentName, baseComponentConfig)
+const baseComponents = import.meta.glob('./components/App*.vue', {
+  eager: true,
+})
+Object.entries(baseComponents).forEach(([path, module]) => {
+  const componentName = path
+    .split('/')
+    .pop()
+    .replace(/\.\w+$/, '')
+  forumApp.component(componentName, module.default)
 })
 
 forumApp.mount('#app')

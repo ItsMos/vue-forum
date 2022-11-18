@@ -4,7 +4,7 @@ const addNotification = ({ message, timeout = null }) => {
   const id = Math.random() + Date.now()
   notifications.push({
     id,
-    message
+    message,
   })
   if (timeout) {
     setTimeout(() => removeNotification(id), timeout)
@@ -12,7 +12,7 @@ const addNotification = ({ message, timeout = null }) => {
 }
 
 const removeNotification = (id) => {
-  const index = notifications.findIndex(item => item.id === id)
+  const index = notifications.findIndex((item) => item.id === id)
   notifications.splice(index, 1)
 }
 
@@ -20,6 +20,6 @@ export default function useNotifications() {
   return {
     notifications,
     addNotification,
-    removeNotification
+    removeNotification,
   }
 }

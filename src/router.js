@@ -16,32 +16,32 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Home,
   },
   {
     path: '/me',
     name: 'Profile',
     component: Profile,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/me/edit',
     name: 'ProfileEdit',
     component: Profile,
     props: { edit: true },
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/category/:id',
     name: 'Category',
     component: Category,
-    props: true
+    props: true,
   },
   {
     path: '/forum/:id',
     name: 'Forum',
     component: Forum,
-    props: true
+    props: true,
   },
   {
     path: '/thread/:id',
@@ -49,7 +49,10 @@ const routes = [
     component: Thread,
     props: true,
     async beforeEnter(to, from, next) {
-      await store.dispatch('threads/fetchThread', { id: to.params.id, once: true })
+      await store.dispatch('threads/fetchThread', {
+        id: to.params.id,
+        once: true,
+      })
       const threadExists = findById(store.state.threads.items, to.params.id)
       if (threadExists) {
         return next()
@@ -59,46 +62,46 @@ const routes = [
           // preserve the wrong url, query and hash
           params: { pathMatch: to.path.substring(1).split('/') },
           query: to.query,
-          hash: to.hash
+          hash: to.hash,
         })
       }
-    }
+    },
   },
   {
     path: '/forum/:forumId/thread/create',
     name: 'ThreadCreate',
     component: ThreadCreate,
     props: true,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/thread/:id/edit',
     name: 'ThreadEdit',
     component: ThreadEdit,
     props: true,
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true },
   },
   {
     path: '/register',
     name: 'Register',
     component: Register,
-    meta: { requiresGuest: true }
+    meta: { requiresGuest: true },
   },
   {
     path: '/signin',
     name: 'SignIn',
     component: SignIn,
-    meta: { requiresGuest: true }
+    meta: { requiresGuest: true },
   },
   {
     path: '/logout',
     name: 'SignOut',
-    async beforeEnter(to, from) {
+    async beforeEnter() {
       await store.dispatch('auth/signOut')
       return { name: 'Home' }
-    }
+    },
   },
-  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound }
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFound },
 ]
 
 const router = createRouter({
@@ -110,10 +113,10 @@ const router = createRouter({
     } else {
       return { top: 0, behavior: 'smooth' }
     }
-  }
+  },
 })
 
-router.beforeEach(async (to, from) => {
+router.beforeEach(async (to) => {
   await store.dispatch('auth/initAuthentication')
   store.dispatch('unsubscribeAllSnaphshots')
   if (to.meta.requiresAuth && !store.state.auth.authId) {

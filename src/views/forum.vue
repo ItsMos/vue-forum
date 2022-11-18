@@ -1,14 +1,13 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="col-full">
     <div v-if="forum" class="col-full push-top">
-
       <div class="forum-header">
         <div class="forum-details">
           <h1>{{ forum.name }}</h1>
           <p class="text-lead">{{ forum.description }}</p>
         </div>
         <router-link
-          :to="{name: 'ThreadCreate', params: {forumId: forum.id}}"
+          :to="{ name: 'ThreadCreate', params: { forumId: forum.id } }"
           class="btn-green btn-small"
         >
           Start a thread
@@ -17,13 +16,9 @@
     </div>
 
     <div class="col-full push-top">
-      <thread-list :threads='threads' />
+      <thread-list :threads="threads" />
 
-      <v-pagination
-        v-model="page"
-        :pages="totalPages"
-        active-color="#57AD8D"
-      />
+      <v-pagination v-model="page" :pages="totalPages" active-color="#57AD8D" />
     </div>
   </div>
 </template>
@@ -40,27 +35,27 @@ export default {
   props: {
     id: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   data() {
     return {
       page: parseInt(this.$route.query.page) || 1,
-      perPage: 10
+      perPage: 10,
     }
   },
 
   computed: {
-    forum () {
+    forum() {
       return findById(this.$store.state.forums.items, this.id)
     },
 
-    threads () {
+    threads() {
       if (!this.forum) return []
       return this.$store.state.threads.items
-        .filter(th => th.forumId === this.forum.id)
-        .map(th => this.$store.getters['threads/thread'](th.id))
+        .filter((th) => th.forumId === this.forum.id)
+        .map((th) => this.$store.getters['threads/thread'](th.id))
     },
 
     threadCount() {
@@ -70,27 +65,31 @@ export default {
     totalPages() {
       if (!this.threadCount) return 0
       return Math.ceil(this.threadCount / this.perPage)
-    }
+    },
   },
 
   methods: {
     ...mapActions('forums', ['fetchForum']),
     ...mapActions('threads', ['fetchThreadsByPage']),
-    ...mapActions('users', ['fetchUsers'])
+    ...mapActions('users', ['fetchUsers']),
   },
 
   async created() {
     const forum = await this.fetchForum({ id: this.id })
     if (this.page > this.totalPages) this.page = 1
-    const threads = await this.fetchThreadsByPage({ ids: forum.threads, page: this.page, perPage: this.perPage })
-    await this.fetchUsers({ ids: threads.map(th => th.userId) })
+    const threads = await this.fetchThreadsByPage({
+      ids: forum.threads,
+      page: this.page,
+      perPage: this.perPage,
+    })
+    await this.fetchUsers({ ids: threads.map((th) => th.userId) })
     this.asyncDataStatus_fetched()
   },
 
   watch: {
     async page() {
       this.$router.push({ query: { page: this.page } })
-    }
-  }
+    },
+  },
 }
 </script>

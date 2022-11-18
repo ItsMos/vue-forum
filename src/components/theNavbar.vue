@@ -1,11 +1,12 @@
 <template>
-  <header class="header" id="header"
-    v-click-outside="()=> mobileNavMenu = false"
-    v-page-scroll="()=> mobileNavMenu = false"
+  <header
+    class="header"
+    id="header"
+    v-click-outside="() => (mobileNavMenu = false)"
+    v-page-scroll="() => (mobileNavMenu = false)"
   >
-
-    <router-link :to="{name: 'Home'}" class="logo">
-      <img src="../assets/svg/vueschool-logo.svg">
+    <router-link :to="{ name: 'Home' }" class="logo">
+      <img src="../assets/svg/vueschool-logo.svg" />
     </router-link>
 
     <div class="btn-hamburger" @click="mobileNavMenu = !mobileNavMenu">
@@ -19,14 +20,22 @@
       <ul>
         <li v-if="user" class="navbar-user">
           <a
-            v-click-outside="()=> userDropdownOpen = false"
+            v-click-outside="() => (userDropdownOpen = false)"
             @click.prevent="userDropdownOpen = !userDropdownOpen"
             id="user-dropdown-toggle"
           >
-            <img class="avatar-small" :src="user.avatar" :alt="`${user.name} profile picture`" />
+            <img
+              class="avatar-small"
+              :src="user.avatar"
+              :alt="`${user.name} profile picture`"
+            />
             <span>
               {{ user.name }}
-              <img class="icon-profile" src="../assets/svg/arrow-profile.svg" alt="" />
+              <img
+                class="icon-profile"
+                src="../assets/svg/arrow-profile.svg"
+                alt=""
+              />
             </span>
           </a>
           <!-- dropdown menu -->
@@ -75,7 +84,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from '@vue/reactivity'
+import { computed, ref } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 
@@ -86,5 +95,7 @@ const user = computed(() => getters['auth/authUser'])
 const mobileNavMenu = ref(false)
 const userDropdownOpen = ref(false)
 
-router.beforeEach(() => { mobileNavMenu.value = false })
+router.beforeEach(() => {
+  mobileNavMenu.value = false
+})
 </script>

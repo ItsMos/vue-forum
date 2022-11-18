@@ -1,14 +1,27 @@
-import { collection, writeBatch, doc, updateDoc, serverTimestamp, getDoc, arrayUnion, increment } from 'firebase/firestore'
+import {
+  collection,
+  writeBatch,
+  doc,
+  updateDoc,
+  serverTimestamp,
+  getDoc,
+  arrayUnion,
+  increment,
+} from 'firebase/firestore'
 import { db } from '@/main'
-import { docToResource, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
+import {
+  docToResource,
+  makeFetchItemAction,
+  makeFetchItemsAction,
+} from '@/helpers'
 export default {
   namespaced: true,
   state: {
-    items: []
+    items: [],
   },
   getters: {},
   actions: {
-    async createPost({ commit, state, rootState }, post) {
+    async createPost({ commit, rootState }, post) {
       post.userId = rootState.auth.authId
       post.publishedAt = serverTimestamp()
 
@@ -19,35 +32,51 @@ export default {
       batch.set(postRef, post)
       batch.update(threadRef, {
         posts: arrayUnion(postRef.id),
-        contributors: arrayUnion(rootState.auth.authId)
+        contributors: arrayUnion(rootState.auth.authId),
       })
       batch.update(userRef, {
-        postsCount: increment(1)
+        postsCount: increment(1),
       })
       await batch.commit()
       const newPost = await getDoc(postRef)
-      commit('setItem', { resource: 'posts', item: docToResource(newPost) }, { root: true })
-      commit('threads/appendPostToThread', { childId: newPost.id, parentId: post.threadId }, { root: true })
-      commit('threads/appendContributorToThread', { childId: rootState.auth.authUser, parentId: post.threadId }, { root: true })
+      commit(
+        'setItem',
+        { resource: 'posts', item: docToResource(newPost) },
+        { root: true }
+      )
+      commit(
+        'threads/appendPostToThread',
+        { childId: newPost.id, parentId: post.threadId },
+        { root: true }
+      )
+      commit(
+        'threads/appendContributorToThread',
+        { childId: rootState.auth.authUser, parentId: post.threadId },
+        { root: true }
+      )
     },
 
-    async updatePost({ commit, state, rootState }, { text, id }) {
+    async updatePost({ commit, rootState }, { text, id }) {
       const post = {
         text,
         edited: {
           at: serverTimestamp(),
           by: rootState.auth.authId,
-          moderated: false
-        }
+          moderated: false,
+        },
       }
       const postRef = doc(db, 'posts', id)
       await updateDoc(postRef, post)
       const updatedPost = await getDoc(postRef)
-      commit('setItem', { resource: 'posts', item: updatedPost }, { root: true })
+      commit(
+        'setItem',
+        { resource: 'posts', item: updatedPost },
+        { root: true }
+      )
     },
 
     fetchPost: makeFetchItemAction({ resource: 'posts' }),
-    fetchPosts: makeFetchItemsAction({ resource: 'posts' })
+    fetchPosts: makeFetchItemsAction({ resource: 'posts' }),
   },
-  mutations: {}
+  mutations: {},
 }

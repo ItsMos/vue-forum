@@ -1,10 +1,10 @@
 export const findById = (resources, id) => {
   if (!resources) return null
-  return resources.find(r => r.id === id)
+  return resources.find((r) => r.id === id)
 }
 
 export const upsert = (resources, resource) => {
-  const index = resources.findIndex(r => r.id === resource.id)
+  const index = resources.findIndex((r) => r.id === resource.id)
   if (resource.id && index !== -1) {
     resources[index] = resource
   } else {
@@ -21,7 +21,9 @@ export const makeAppendChildToParentMutation = ({ parent, child }) => {
   return (state, { childId, parentId }) => {
     const resource = findById(state.items, parentId)
     if (!resource) {
-      console.warn(`Appending ${child} ${childId} to ${parent} ${parentId} failed because the parent didn't exist`)
+      console.warn(
+        `Appending ${child} ${childId} to ${parent} ${parentId} failed because the parent didn't exist`
+      )
       return
     }
     resource[child] = resource[child] || []
@@ -32,8 +34,10 @@ export const makeAppendChildToParentMutation = ({ parent, child }) => {
 }
 
 export const makeFetchItemAction = ({ resource }) => {
-  return ({ dispatch }, payload) => dispatch('fetchItem', { resource, ...payload }, { root: true })
+  return ({ dispatch }, payload) =>
+    dispatch('fetchItem', { resource, ...payload }, { root: true })
 }
 export const makeFetchItemsAction = ({ resource }) => {
-  return ({ dispatch }, payload) => dispatch('fetchItems', { resource, ...payload }, { root: true })
+  return ({ dispatch }, payload) =>
+    dispatch('fetchItems', { resource, ...payload }, { root: true })
 }

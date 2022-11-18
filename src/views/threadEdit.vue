@@ -1,8 +1,17 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="col-full push-top">
-    <h1>Editing <i>{{thread.title}}</i></h1>
+    <h1>
+      Editing <i>{{ thread.title }}</i>
+    </h1>
 
-    <threadEditor :title="thread.title" :text="text" @save="save" @cancel="cancel" @dirty='formIsDirty = true' @clean='formIsDirty = false'/>
+    <threadEditor
+      :title="thread.title"
+      :text="text"
+      @save="save"
+      @cancel="cancel"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
+    />
   </div>
 </template>
 
@@ -16,11 +25,11 @@ export default {
   components: { threadEditor },
   mixins: [asyncDataStatus],
   props: {
-    id: { type: String, required: true }
+    id: { type: String, required: true },
   },
   data() {
     return {
-      formIsDirty: false
+      formIsDirty: false,
     }
   },
 
@@ -31,7 +40,7 @@ export default {
     text() {
       const post = findById(this.$store.state.posts.items, this.thread.posts[0])
       return post ? post.text : ''
-    }
+    },
   },
 
   methods: {
@@ -42,14 +51,14 @@ export default {
       const thread = await this.updateThread({
         title,
         text,
-        id: this.id
+        id: this.id,
       })
       this.$router.push({ name: 'Thread', params: { id: thread.id } })
     },
 
     cancel() {
       this.$router.push({ name: 'Thread', params: { id: this.id } })
-    }
+    },
   },
 
   async created() {
@@ -60,9 +69,11 @@ export default {
 
   beforeRouteLeave() {
     if (this.formIsDirty) {
-      const confirmed = window.confirm('Are you sure want to leave? Unsaved changes will be lost!')
+      const confirmed = window.confirm(
+        'Are you sure want to leave? Unsaved changes will be lost!'
+      )
       if (!confirmed) return false
     }
-  }
+  },
 }
 </script>

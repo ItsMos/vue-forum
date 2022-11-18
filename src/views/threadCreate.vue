@@ -1,8 +1,15 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="col-full push-top">
-    <h1>Create new thread in <i>{{forum.name}}</i></h1>
+    <h1>
+      Create new thread in <i>{{ forum.name }}</i>
+    </h1>
 
-    <threadEditor @save='save' @cancel='cancel' @dirty='formIsDirty = true' @clean='formIsDirty = false'/>
+    <threadEditor
+      @save="save"
+      @cancel="cancel"
+      @dirty="formIsDirty = true"
+      @clean="formIsDirty = false"
+    />
   </div>
 </template>
 
@@ -16,18 +23,18 @@ export default {
   components: { threadEditor },
   mixins: [asyncDataStatus],
   props: {
-    forumId: { type: String, required: true }
+    forumId: { type: String, required: true },
   },
   data() {
     return {
-      formIsDirty: false
+      formIsDirty: false,
     }
   },
 
   computed: {
     forum() {
       return findById(this.$store.state.forums.items, this.forumId)
-    }
+    },
   },
 
   methods: {
@@ -38,14 +45,14 @@ export default {
       const thread = await this.createThread({
         title,
         text,
-        forumId: this.forum.id
+        forumId: this.forum.id,
       })
       this.$router.push({ name: 'Thread', params: { id: thread.id } })
     },
 
     cancel() {
       this.$router.push({ name: 'Forum', params: { id: this.forumId } })
-    }
+    },
   },
 
   async created() {
@@ -55,13 +62,13 @@ export default {
 
   beforeRouteLeave() {
     if (this.formIsDirty) {
-      const confirmed = window.confirm('Are you sure want to leave? Unsaved changes will be lost!')
+      const confirmed = window.confirm(
+        'Are you sure want to leave? Unsaved changes will be lost!'
+      )
       if (!confirmed) return false
     }
-  }
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

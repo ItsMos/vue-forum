@@ -1,7 +1,7 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="container">
     <h1 class="push-top">Welcome to the forums</h1>
-    <categoryList :categories='categories' />
+    <categoryList :categories="categories" />
   </div>
 </template>
 
@@ -15,19 +15,19 @@ export default {
   mixins: [asyncDataStatus],
 
   computed: {
-    ...mapState('categories', { categories: 'items' })
+    ...mapState('categories', { categories: 'items' }),
   },
 
   methods: {
     ...mapActions('categories', ['fetchAllCategories']),
-    ...mapActions('forums', ['fetchForums'])
+    ...mapActions('forums', ['fetchForums']),
   },
 
-  async created () {
+  async created() {
     const categories = await this.fetchAllCategories()
-    const forumIds = categories.map(category => category.forums).flat()
+    const forumIds = categories.map((category) => category.forums).flat()
     await this.fetchForums({ ids: forumIds })
     this.asyncDataStatus_fetched()
-  }
+  },
 }
 </script>

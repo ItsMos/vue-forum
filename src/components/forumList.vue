@@ -1,27 +1,32 @@
 <template>
   <div class="col-full">
     <div class="forum-list">
-
       <div class="list-title">
-        <router-link v-if="categoryId" :to="{name: 'Category', params: {id: categoryId}}">{{ title }}</router-link>
+        <router-link
+          v-if="categoryId"
+          :to="{ name: 'Category', params: { id: categoryId } }"
+          >{{ title }}</router-link
+        >
         <span v-else>{{ title }}</span>
       </div>
 
       <div class="forum-listing" v-for="forum in forums" :key="forum.id">
         <div class="forum-details">
-            <router-link
-              :to="{name: 'Forum', params: {id: forum.id}}"
-              class="text-xlarge"
-            >
-              {{ forum.name }}
-            </router-link>
-            <p>{{ forum.description }}</p>
+          <router-link
+            :to="{ name: 'Forum', params: { id: forum.id } }"
+            class="text-xlarge"
+          >
+            {{ forum.name }}
+          </router-link>
+          <p>{{ forum.description }}</p>
         </div>
 
         <div class="threads-count">
           <p>
             <span class="count">{{ forum.threads?.length || 0 }}</span>
-            {{ (!forum.threads || forum.threads?.length > 1) ? 'threads' : 'thread' }}
+            {{
+              !forum.threads || forum.threads?.length > 1 ? 'threads' : 'thread'
+            }}
           </p>
         </div>
 
@@ -36,20 +41,18 @@ export default {
   props: {
     forums: {
       type: Array,
-      required: true
+      required: true,
     },
     title: {
       type: String,
-      default: 'Forums'
+      default: 'Forums',
     },
     categoryId: {
       type: String,
-      required: false
-    }
-  }
+      required: false,
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

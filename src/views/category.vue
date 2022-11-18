@@ -1,7 +1,10 @@
 <template>
   <div v-if="asyncDataStatus_ready" class="container col-full">
     <h1>{{ category.name }}</h1>
-    <forumList :title='category.name' :forums='getForumsForCategory(category)' />
+    <forumList
+      :title="category.name"
+      :forums="getForumsForCategory(category)"
+    />
   </div>
 </template>
 
@@ -15,8 +18,8 @@ export default {
   props: {
     id: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   components: { forumList },
@@ -25,25 +28,25 @@ export default {
   computed: {
     category() {
       return findById(this.$store.state.categories.items, this.id) || {}
-    }
+    },
   },
 
   methods: {
     ...mapActions('categories', ['fetchCategory']),
     ...mapActions('forums', ['fetchForums']),
     getForumsForCategory(category) {
-      return this.$store.state.forums.items.filter(f => f.categoryId === category.id)
-    }
+      return this.$store.state.forums.items.filter(
+        (f) => f.categoryId === category.id
+      )
+    },
   },
 
   async created() {
     const category = await this.fetchCategory({ id: this.id })
     await this.fetchForums({ ids: category.forums })
     this.asyncDataStatus_fetched()
-  }
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>

@@ -1,7 +1,7 @@
 export default {
   data() {
     return {
-      asyncDataStatus_ready: false
+      asyncDataStatus_ready: false,
     }
   },
 
@@ -9,6 +9,6 @@ export default {
     asyncDataStatus_fetched() {
       this.asyncDataStatus_ready = true
       this.$emit('ready')
-    }
-  }
+    },
+  },
 }

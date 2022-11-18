@@ -1,28 +1,40 @@
 <template>
-  <div v-if="asyncDataStatus_ready" class='col-large push-top'>
+  <div v-if="asyncDataStatus_ready" class="col-large push-top">
     <h1>
       {{ thread.title }}
       <router-link
         v-if="thread.userId === authUser?.id"
-        :to="{name: 'ThreadEdit', id: this.id}"
+        :to="{ name: 'ThreadEdit', id: this.id }"
         class="btn-green btn-small"
-        tag="button"
       >
-        Edit Thread
+        <button>Edit Thread</button>
       </router-link>
     </h1>
 
     <p>
-      By <a href="#" class="link-unstyled">{{thread.author?.name}}</a>, <AppDate :timestamp='thread.publishedAt'/>.
-      <span style="float:right; margin-top: 2px;" class="hide-mobile text-faded text-small">
-        {{thread.repliesCount}} replies by {{thread.contributorsCount}} contributors
+      By <a href="#" class="link-unstyled">{{ thread.author?.name }}</a
+      >, <AppDate :timestamp="thread.publishedAt" />.
+      <span
+        style="float: right; margin-top: 2px"
+        class="hide-mobile text-faded text-small"
+      >
+        {{ thread.repliesCount }} replies by
+        {{ thread.contributorsCount }} contributors
       </span>
     </p>
-    <post-list :posts='threadPosts'/>
+    <post-list :posts="threadPosts" />
 
-    <post-editor v-if="authUser" @save='addPost' />
-    <div v-else class="text-center" style="margin-bottom: 50px;">
-      <router-link :to="{name: 'SignIn', query: {redirectTo: $route.path}}">Sign In</router-link> or <router-link :to="{name: 'Register', query: {redirectTo: $route.path}}">Register</router-link> to reply
+    <post-editor v-if="authUser" @save="addPost" />
+    <div v-else class="text-center" style="margin-bottom: 50px">
+      <router-link :to="{ name: 'SignIn', query: { redirectTo: $route.path } }"
+        >Sign In</router-link
+      >
+      or
+      <router-link
+        :to="{ name: 'Register', query: { redirectTo: $route.path } }"
+        >Register</router-link
+      >
+      to reply
     </div>
   </div>
 </template>
@@ -38,14 +50,14 @@ import difference from 'lodash/difference'
 export default {
   components: {
     postList,
-    postEditor
+    postEditor,
   },
 
   props: {
     id: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
 
   setup() {
@@ -67,8 +79,8 @@ export default {
     },
 
     threadPosts() {
-      return this.posts.filter(p => p.threadId === this.id)
-    }
+      return this.posts.filter((p) => p.threadId === this.id)
+    },
   },
 
   methods: {
@@ -79,7 +91,7 @@ export default {
     addPost(ev) {
       const post = {
         ...ev.post,
-        threadId: this.id
+        threadId: this.id,
       }
       this.createPost(post)
     },
@@ -89,17 +101,23 @@ export default {
       const posts = await this.fetchPosts({
         ids,
         onSnapshot: ({ isLocal, previousItem }) => {
-          if (!this.asyncDataStatus_ready || isLocal ||
+          if (
+            !this.asyncDataStatus_ready ||
+            isLocal ||
             (previousItem?.edited && !previousItem?.edited?.at)
-          ) return
-          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
-        }
+          )
+            return
+          this.addNotification({
+            message: 'Thread recently updated',
+            timeout: 5000,
+          })
+        },
       })
       // fetch the user for each post
-      let users = posts.map(post => post.userId)
+      let users = posts.map((post) => post.userId)
       users = users.filter((id, index) => users.indexOf(id) === index)
       await this.fetchUsers({ ids: users })
-    }
+    },
   },
 
   async created() {
@@ -113,13 +131,16 @@ export default {
         if (hasNewPosts) {
           this.fetchPostsWithUsers(newPostIds)
         } else {
-          this.addNotification({ message: 'Thread recently updated', timeout: 5000 })
+          this.addNotification({
+            message: 'Thread recently updated',
+            timeout: 5000,
+          })
         }
-      }
+      },
     })
 
     this.fetchPostsWithUsers(thread.posts)
     this.asyncDataStatus_fetched()
-  }
+  },
 }
 </script>

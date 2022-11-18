@@ -1,24 +1,19 @@
 <template>
   <div v-if="user" class="flex-grid">
     <div class="col-3 push-top">
-
       <userProfileCard v-if="!edit" :user="user" />
       <userProfileCardEditor v-else :user="user" />
-
     </div>
 
     <div class="col-7 push-top">
-
       <div class="profile-header">
-        <span class="text-lead">
-          {{user.username}}'s recent activity
-        </span>
+        <span class="text-lead"> {{ user.username }}'s recent activity </span>
         <a href="#">See only started threads?</a>
       </div>
 
-      <hr>
+      <hr />
 
-      <postList :posts='user.posts'/>
+      <postList :posts="user.posts" />
     </div>
   </div>
 </template>
@@ -36,7 +31,7 @@ export default {
   mixins: [asyncDataStatus, infiniteScroll],
 
   props: {
-    edit: { type: Boolean, default: false }
+    edit: { type: Boolean, default: false },
   },
 
   computed: {
@@ -44,19 +39,22 @@ export default {
     lastPostFetched() {
       if (this.user.posts.length === 0) return null
       return this.user.posts[this.user.posts.length - 1]
-    }
+    },
   },
 
   async created() {
-    await this.$store.dispatch('auth/fetchAuthUserPosts', { startAfter: this.lastPostFetched })
+    await this.$store.dispatch('auth/fetchAuthUserPosts', {
+      startAfter: this.lastPostFetched,
+    })
     this.asyncDataStatus_fetched()
     this.setupInfiniteScroll(async () => {
-      const posts = await this.$store.dispatch('auth/fetchAuthUserPosts', { startAfter: this.lastPostFetched })
+      const posts = await this.$store.dispatch('auth/fetchAuthUserPosts', {
+        startAfter: this.lastPostFetched,
+      })
       if (posts && this.user.posts.length >= this.user.postsCount) {
         this.removeInfiniteScroll()
       }
     })
-  }
+  },
 }
-
 </script>

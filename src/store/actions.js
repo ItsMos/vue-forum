@@ -3,10 +3,13 @@ import { db } from '@/main'
 import { docToResource, findById } from '@/helpers'
 
 export default {
-  fetchItem({ commit, state }, { id, resource, handleUnsubscribe = null, once = false, onSnapshot = null }) {
+  fetchItem(
+    { commit, state },
+    { id, resource, handleUnsubscribe = null, once = false, onSnapshot = null }
+  ) {
     console.log('fetching from ' + resource, id)
     return new Promise((resolve) => {
-      const unsubscribe = fsOnSnapshot(doc(db, resource, id), doc => {
+      const unsubscribe = fsOnSnapshot(doc(db, resource, id), (doc) => {
         if (once) {
           unsubscribe()
         }
@@ -33,11 +36,13 @@ export default {
   },
 
   fetchItems({ dispatch }, { ids, resource, onSnapshot = null }) {
-    return Promise.all(ids.map(id => dispatch('fetchItem', { id, resource, onSnapshot })))
+    return Promise.all(
+      ids.map((id) => dispatch('fetchItem', { id, resource, onSnapshot }))
+    )
   },
 
   async unsubscribeAllSnaphshots({ state, commit }) {
-    state.unsubscribes.forEach(unsubscribe => unsubscribe())
+    state.unsubscribes.forEach((unsubscribe) => unsubscribe())
     commit('clearAllUnsubscribes')
-  }
+  },
 }

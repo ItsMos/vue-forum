@@ -1,20 +1,32 @@
-import { doc, updateDoc, serverTimestamp, getDoc, setDoc } from 'firebase/firestore'
+import {
+  doc,
+  updateDoc,
+  serverTimestamp,
+  getDoc,
+  setDoc,
+} from 'firebase/firestore'
 import { db } from '@/main'
-import { findById, docToResource, makeAppendChildToParentMutation, makeFetchItemAction, makeFetchItemsAction } from '@/helpers'
+import {
+  findById,
+  docToResource,
+  makeAppendChildToParentMutation,
+  makeFetchItemAction,
+  makeFetchItemsAction,
+} from '@/helpers'
 export default {
   namespaced: true,
   state: {
-    items: []
+    items: [],
   },
   getters: {
     user: (state, getters, rootState) => {
-      return id => {
+      return (id) => {
         const user = findById(state.items, id)
         if (!user) return null
         return {
           ...user,
           get posts() {
-            return rootState.posts.items.filter(p => p.userId === user.id)
+            return rootState.posts.items.filter((p) => p.userId === user.id)
           },
 
           get postsCount() {
@@ -22,15 +34,15 @@ export default {
           },
 
           get threads() {
-            return rootState.threads.items.filter(th => th.userId === user.id)
+            return rootState.threads.items.filter((th) => th.userId === user.id)
           },
 
           get threadsCount() {
             return user.threads?.length || 0
-          }
+          },
         }
       }
-    }
+    },
   },
   actions: {
     async createUser({ commit }, user) {
@@ -51,15 +63,22 @@ export default {
         bio: user.bio || null,
         website: user.website || null,
         email: user.email || null,
-        location: user.location || null
+        location: user.location || null,
       }
       await updateDoc(doc(db, 'users', user.id), updates)
-      commit('setItem', { resource: 'users', item: user, userId: user.id }, { root: true })
+      commit(
+        'setItem',
+        { resource: 'users', item: user, userId: user.id },
+        { root: true }
+      )
     },
     fetchUser: makeFetchItemAction({ resource: 'users' }),
-    fetchUsers: makeFetchItemsAction({ resource: 'users' })
+    fetchUsers: makeFetchItemsAction({ resource: 'users' }),
   },
   mutations: {
-    appendThreadToUser: makeAppendChildToParentMutation({ parent: 'users', child: 'threads' })
-  }
+    appendThreadToUser: makeAppendChildToParentMutation({
+      parent: 'users',
+      child: 'threads',
+    }),
+  },
 }

@@ -1,6 +1,6 @@
 const clickOutsideDirective = {
   mounted(el, binding) {
-    el._clickOutsideHandler_ = ev => {
+    el._clickOutsideHandler_ = (ev) => {
       if (!(el === ev.target || el.contains(ev.target))) {
         binding.value(/* ev */)
       }
@@ -10,7 +10,7 @@ const clickOutsideDirective = {
 
   unmounted(el) {
     removeEventListener('click', el._clickOutsideHandler_)
-  }
+  },
 }
 
 export default (app) => {

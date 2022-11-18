@@ -5,6 +5,9 @@ export default {
     upsert(state[resource].items, docToResource(item))
   },
 
-  appendUnsubscribe: (state, { unsubscribe }) => state.unsubscribes.push(unsubscribe),
-  clearAllUnsubscribes(state) { state.unsubscribes = [] }
+  appendUnsubscribe: (state, { unsubscribe }) =>
+    state.unsubscribes.push(unsubscribe),
+  clearAllUnsubscribes(state) {
+    state.unsubscribes = []
+  },
 }

@@ -1,9 +1,10 @@
 <template>
   <forumList
-    v-for="category in categories" :key="category.id"
-    :forums='getForumsForCategory(category)'
-    :title='category.name'
-    :category-id='category.id'
+    v-for="category in categories"
+    :key="category.id"
+    :forums="getForumsForCategory(category)"
+    :title="category.name"
+    :category-id="category.id"
   />
 </template>
 
@@ -13,21 +14,21 @@ export default {
   props: {
     categories: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
-    forumList
+    forumList,
   },
 
   methods: {
     getForumsForCategory(category) {
-      return this.$store.state.forums.items.filter(f => f.categoryId === category.id)
-    }
-  }
+      return this.$store.state.forums.items.filter(
+        (f) => f.categoryId === category.id
+      )
+    },
+  },
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
